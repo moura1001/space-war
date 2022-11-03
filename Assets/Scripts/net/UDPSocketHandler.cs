@@ -12,6 +12,7 @@ public class UDPSocketHandler : MonoBehaviour
     //private UDPSocket socket;
 
     private bool connectionEstablished;
+    private bool isServer;
 
     private UDPSocket client;
     private UDPSocket server;
@@ -32,6 +33,8 @@ public class UDPSocketHandler : MonoBehaviour
 
     public void ClientHandler(string ip, int port)
     {
+        //isServer = false;
+
         /*socket = new UDPSocket();
         socket.Client(ip, port);
         socket.OnReceived += ClientReceiveMessage;
@@ -55,7 +58,7 @@ public class UDPSocketHandler : MonoBehaviour
 
     private void ClientReceiveMessage(string ip, int port, byte[] data, int bytesRead)
     {
-        string message = Encoding.UTF8.GetString(data, 0, bytesRead);
+        string message = Encoding.ASCII.GetString(data, 0, bytesRead);
 
         if ("ACCEPTED".Equals(message))
         {
@@ -65,8 +68,16 @@ public class UDPSocketHandler : MonoBehaviour
         Debug.Log("CLIENT: RECV: " + message);
     }
 
+    public void ClientSendMessage(string message)
+    {
+        client.Send(message);
+        Debug.Log("CLIENT MESSAGE SENDED");
+    }
+
     public void ServerHandler()
     {
+        isServer = true;
+
         /*socket = new UDPSocket();
         socket.Server("127.0.0.1", 4000);
 
@@ -80,7 +91,7 @@ public class UDPSocketHandler : MonoBehaviour
 
     private void ServerReceiveMessage(string ip, int port, byte[] data, int bytesRead)
     {
-        string message = Encoding.UTF8.GetString(data, 0, bytesRead);
+        string message = Encoding.ASCII.GetString(data, 0, bytesRead);
 
         if ("CONNECT".Equals(message))
         {
@@ -101,8 +112,30 @@ public class UDPSocketHandler : MonoBehaviour
         Debug.Log("SERVER: RECV: " + message);
     }
 
+    public void ServerSendMessage(string message)
+    {
+        server.Send(message);
+    }
+
     public bool ConnectionEstablished()
     {
         return connectionEstablished;
+    }
+
+    public bool IsServer()
+    {
+        return isServer;
+    }
+
+    public void AddOnReceiveMessageListenerForClient(UDPSocket.UdpOnReceived listener)
+    {
+        client.OnReceived -= ClientReceiveMessage;
+        client.OnReceived += listener;
+    }
+
+    public void AddOnReceiveMessageListenerForServer(UDPSocket.UdpOnReceived listener)
+    {
+        server.OnReceived -= ServerReceiveMessage;
+        server.OnReceived += listener;
     }
 }

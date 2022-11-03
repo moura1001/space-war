@@ -119,17 +119,12 @@ public class MenuHandler : MonoBehaviour
 
             StartCoroutine(CheckConnection());
 
-            if (UDPSocketHandler.Instance.ConnectionEstablished())
-            {
-                //multiplayerEnterButton.gameObject.transform.parent.gameObject.SetActive(true);
-                GameScreen();
-                SceneManager.LoadScene(1);
-            }
+            //127.0.0.1:4000
 
         }
         catch (Exception e)
         {
-            Debug.Log("Error trying to create server: Details `" + e.Message + "`");
+            Debug.Log("Error trying to create server: Details: `" + e.Message + "`");
         }
     }
 
@@ -142,6 +137,15 @@ public class MenuHandler : MonoBehaviour
             limitTime--;
 
             yield return new WaitForSeconds(1);
+        }
+
+        Debug.Log("Connection Establisehd: " + UDPSocketHandler.Instance.ConnectionEstablished());
+
+        if (UDPSocketHandler.Instance.ConnectionEstablished())
+        {
+            //multiplayerEnterButton.gameObject.transform.parent.gameObject.SetActive(true);
+            GameScreen();
+            SceneManager.LoadScene(1);
         }
     }
 
@@ -163,7 +167,7 @@ public class MenuHandler : MonoBehaviour
             UDPSocketHandler.Instance.ClientHandler(ip, port);
 
             GameScreen();
-            SceneManager.LoadScene(1);
+            //SceneManager.LoadScene(1);
 
         } catch (Exception e)
         {
