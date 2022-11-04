@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &8774233778294200298
+--- !u!1 &94258514455847434
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,22 +8,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8774233778294200296}
-  - component: {fileID: 8774233778294200297}
+  - component: {fileID: 94258514455847432}
+  - component: {fileID: 94258514455847433}
   m_Layer: 0
-  m_Name: ServerHandler
+  m_Name: SPAWN_HANDLER
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8774233778294200296
+--- !u!4 &94258514455847432
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8774233778294200298}
+  m_GameObject: {fileID: 94258514455847434}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -31,18 +31,16 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8774233778294200297
+--- !u!114 &94258514455847433
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8774233778294200298}
+  m_GameObject: {fileID: 94258514455847434}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2770b2bb01090d4d832145ab0b6098e, type: 3}
+  m_Script: {fileID: 11500000, guid: 19e34b91c3e1c924ca8ca1ae2b701359, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player1: {fileID: 6745382774177030317, guid: bfa05332361bf2f44b733bcac4938c62, type: 3}
-  player2: {fileID: 6505785947506333069, guid: 54097d068a678624f92578c7da6183d8, type: 3}
-  spawnHandler: {fileID: 94258514455847434, guid: 14445a2564a220842b5640b2702ef5c2, type: 3}
+  enemy: {fileID: 3584743822871197157, guid: 8707545209e31a042beb689c25b30976, type: 3}

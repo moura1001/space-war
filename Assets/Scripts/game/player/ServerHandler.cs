@@ -8,6 +8,7 @@ public class ServerHandler : MonoBehaviour
 {
     public GameObject player1;
     public GameObject player2;
+    public GameObject spawnHandler;
 
     private GameObject player;
     private GameObject client;
@@ -28,6 +29,7 @@ public class ServerHandler : MonoBehaviour
 
         InstantiatePlayer1();
         InstantiatePlayer2();
+        InstantiateSpawnHandler();
     }
 
     // Update is called once per frame
@@ -59,7 +61,7 @@ public class ServerHandler : MonoBehaviour
 
         gameEntities.Add(id, player);
 
-        UDPSocketHandler.Instance.ServerSendMessage($"CREATE;player1;{pos.x},{pos.y}");
+        UDPSocketHandler.Instance.ServerSendMessage($"CREATE;player1;{id};{pos.x},{pos.y}");
     }
 
     private void InstantiatePlayer2()
@@ -72,7 +74,7 @@ public class ServerHandler : MonoBehaviour
 
         gameEntities.Add(id, client);
 
-        UDPSocketHandler.Instance.ServerSendMessage($"CREATE;player2;{pos.x},{pos.y}");
+        UDPSocketHandler.Instance.ServerSendMessage($"CREATE;player2;{id};{pos.x},{pos.y}");
     }
 
     private void OnReceiveMessage(string ip, int port, byte[] data, int bytesRead)
@@ -96,5 +98,24 @@ public class ServerHandler : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void InstantiateSpawnHandler()
+    {
+        var spawn = Instantiate(spawnHandler).GetComponent<SpawnHandler>();
+        spawn.OnSpawn += OnSpawnEnemy;
+
+    }
+
+    private void OnSpawnEnemy(GameObject enemy)
+    {
+        Vector3 pos = enemy.transform.position;
+        Enemy enemyScript = enemy.GetComponent<Enemy>();
+
+        string id = enemyScript.GetId();
+
+        gameEntities.Add(id, enemy);
+
+        UDPSocketHandler.Instance.ServerSendMessage($"CREATE;enemy;{id};{pos.x}@{pos.y}");
     }
 }
