@@ -31,28 +31,27 @@ public class UDPSocketHandler : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    void OnDestroy()
+    {
+        server?.Close();
+        client?.Close();
+        Debug.Log("OnDestroy");
+    }
+
     public void ClientHandler(string ip, int port)
     {
-        //isServer = false;
+        isServer = false;
 
         /*socket = new UDPSocket();
         socket.Client(ip, port);
         socket.OnReceived += ClientReceiveMessage;
         
-        socket.Send("TEST!");
-        socket.Send("abc");
-        socket.Send("123");
-        socket.Send("pçpçpç");
         socket.Send("CONNECT");*/
         //Debug.Log("pçpçpçpçpçpç");
         client = new UDPSocket();
         client.Client(ip, port);
         client.OnReceived += ClientReceiveMessage;
 
-        client.Send("TEST!");
-        client.Send("abc");
-        client.Send("123");
-        client.Send("pçpçpç");
         client.Send("CONNECT");
     }
 
@@ -62,7 +61,7 @@ public class UDPSocketHandler : MonoBehaviour
 
         if ("ACCEPTED".Equals(message))
         {
-            //MenuHandler.Instance.LoadScene(1);
+            connectionEstablished = true;
         }
 
         Debug.Log("CLIENT: RECV: " + message);

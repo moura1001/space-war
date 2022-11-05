@@ -8,7 +8,7 @@ namespace UDP
     public class UDPSocket
     {
         private Socket _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-        private const int bufSize = 256;//8 * 1024;
+        private const int bufSize = 256;
         private State state = new State();
         private EndPoint epFrom = new IPEndPoint(IPAddress.Any, 0);
         private IPEndPoint remoteAddr;
@@ -40,6 +40,11 @@ namespace UDP
             remoteAddr = new IPEndPoint(IPAddress.Parse(address), port);
         }
 
+        public void Close()
+        {
+            _socket.Close();
+        }
+
         public void Send(string message)
         {
             byte[] data = Encoding.ASCII.GetBytes(message);
@@ -59,7 +64,6 @@ namespace UDP
                 OnReceived?.Invoke(ip, port, state.buffer, bytes);
 
                 _socket.BeginReceiveFrom(so.buffer, 0, bufSize, SocketFlags.None, ref epFrom, recv, so);
-                //Console.WriteLine("{0}: RECV: {1}: {2}, {3}", whoAmI, epFrom.ToString(), bytes, Encoding.ASCII.GetString(so.buffer, 0, bytes));
             }, state);
         }
     }

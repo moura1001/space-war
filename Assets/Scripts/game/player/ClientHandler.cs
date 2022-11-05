@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 using System.Text;
 
 public class ClientHandler : MonoBehaviour
@@ -14,89 +13,40 @@ public class ClientHandler : MonoBehaviour
 
     private Dictionary<string, GameObject> gameEntities;
 
-    class MyEntity
-    {
-        bool instantiate;
-        public bool Instantiate
-        {
-            get => instantiate;
-            set => instantiate = value;
-        }
-
-        GameObject entity;
-        public GameObject Entity
-        {
-            get => entity;
-            set => entity = value;
-        }
-
-        string id;
-        public string Id
-        {
-            get => id;
-            set => id = value;
-        }
-
-        Vector3 position;
-        public Vector3 Position
-        {
-            get => position;
-            set => position = value;
-        }
-    }
-
-    private MyEntity instantiateEntity;
-    private bool isPlayer2;
-
     // Start is called before the first frame update
     void Start()
     {
         gameEntities = new Dictionary<string, GameObject>();
         UDPSocketHandler.Instance.AddOnReceiveMessageListenerForClient(OnReceiveMessage);
-        
-        instantiateEntity = new MyEntity();
-        isPlayer2 = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (instantiateEntity.Instantiate)
-        {
-            var entity = Instantiate(instantiateEntity.Entity, instantiateEntity.Position, Quaternion.identity);
-            gameEntities.Add(instantiateEntity.Id, entity);
-
-            instantiateEntity.Instantiate = false;
-
-            if(isPlayer2)
-            {
-                player = entity;
-                isPlayer2 = false;
-            }
-        }
+        
     }
 
     private void InstantiateEntity(string type, string id, Vector3 position)
     {
+        GameObject entity = null;
+
         switch (type)
         {
             case "player1":
-                instantiateEntity.Entity = player1;
-            break;
+                entity = Instantiate(player1, position, Quaternion.identity);
+                break;
 
             case "player2":
-                instantiateEntity.Entity = player2;
-                isPlayer2 = true;
-            break;
+                entity = Instantiate(player2, position, Quaternion.identity);
+                player = entity;
+                break;
 
             case "enemy":
-                instantiateEntity.Entity = enemy;
+                entity = Instantiate(enemy, position, Quaternion.identity);
                 break;
         }
 
-        instantiateEntity.Position = position;
-        instantiateEntity.Id = id;
-        instantiateEntity.Instantiate = true;
+        gameEntities.Add(id, entity);
     }
 
     private void DestroyEntity(string id)

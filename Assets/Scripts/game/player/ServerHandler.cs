@@ -27,9 +27,11 @@ public class ServerHandler : MonoBehaviour
 
         UDPSocketHandler.Instance.AddOnReceiveMessageListenerForServer(OnReceiveMessage);
 
-        InstantiatePlayer1();
-        InstantiatePlayer2();
-        InstantiateSpawnHandler();
+        StartCoroutine(InstantiateEntities());
+
+        //InstantiatePlayer1();
+        //InstantiatePlayer2();
+        //InstantiateSpawnHandler();
     }
 
     // Update is called once per frame
@@ -51,6 +53,15 @@ public class ServerHandler : MonoBehaviour
         }
     }
 
+    private IEnumerator InstantiateEntities()
+    {
+        yield return new WaitForSeconds(2);
+
+        InstantiatePlayer1();
+        InstantiatePlayer2();
+        InstantiateSpawnHandler();
+    }
+
     private void InstantiatePlayer1()
     {
         Vector3 pos = player1.transform.position;
@@ -61,7 +72,7 @@ public class ServerHandler : MonoBehaviour
 
         gameEntities.Add(id, player);
 
-        UDPSocketHandler.Instance.ServerSendMessage($"CREATE;player1;{id};{pos.x},{pos.y}");
+        UDPSocketHandler.Instance.ServerSendMessage($"CREATE;player1;{id};{pos.x}@{pos.y}");
     }
 
     private void InstantiatePlayer2()
@@ -74,7 +85,7 @@ public class ServerHandler : MonoBehaviour
 
         gameEntities.Add(id, client);
 
-        UDPSocketHandler.Instance.ServerSendMessage($"CREATE;player2;{id};{pos.x},{pos.y}");
+        UDPSocketHandler.Instance.ServerSendMessage($"CREATE;player2;{id};{pos.x}@{pos.y}");
     }
 
     private void OnReceiveMessage(string ip, int port, byte[] data, int bytesRead)

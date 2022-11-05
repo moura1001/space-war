@@ -13,7 +13,7 @@ public class GameHandler : MonoBehaviour
         if (UDPSocketHandler.Instance.IsServer())
         {
             ServerHandler();
-            ClientHandler();
+            //ClientHandler();
         
         } else
         {

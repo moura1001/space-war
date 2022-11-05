@@ -132,7 +132,7 @@ public class MenuHandler : MonoBehaviour
     {
         int limitTime = 10;
 
-        while (!UDPSocketHandler.Instance.ConnectionEstablished() || limitTime > 0)
+        while (!UDPSocketHandler.Instance.ConnectionEstablished() && limitTime > 0)
         {
             limitTime--;
 
@@ -166,8 +166,7 @@ public class MenuHandler : MonoBehaviour
 
             UDPSocketHandler.Instance.ClientHandler(ip, port);
 
-            GameScreen();
-            //SceneManager.LoadScene(1);
+            StartCoroutine(CheckConnection());
 
         } catch (Exception e)
         {
