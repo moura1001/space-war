@@ -26,6 +26,6 @@ public class SpawnHandler : MonoBehaviour
         var enemyScript = Instantiate(enemy, position, Quaternion.identity);
         enemyScript.GetComponent<Enemy>().SetId(id);
 
-        OnSpawn(enemyScript);
+        OnSpawn?.Invoke(enemyScript);
     }
 }

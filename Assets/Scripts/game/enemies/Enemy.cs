@@ -8,10 +8,12 @@ public class Enemy : MonoBehaviour
     private Vector3 moveDirection = new Vector3(0, -1, 0);
     private string id;
 
+    public event SpawnHandler.OnSpawnEnemy OnArrivalPosition;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        StartCoroutine(CheckPosition());
     }
 
     void FixedUpdate()
@@ -22,10 +24,16 @@ public class Enemy : MonoBehaviour
     void OnTriggerEnter2D(Collider2D col)
     {
         Debug.Log("OnTriggerEnter2D");
-        Destroy(gameObject);
     }
-    
-    
+
+    private IEnumerator CheckPosition()
+    {
+        while (gameObject.transform.position.y > -4)
+            yield return new WaitForSeconds(2);
+
+        OnArrivalPosition?.Invoke(gameObject);
+    }
+
     public string GetId()
     {
         return id;

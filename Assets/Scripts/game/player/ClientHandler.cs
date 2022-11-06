@@ -133,6 +133,11 @@ public class ClientHandler : MonoBehaviour
                 InstantiateEntity(type, id, new Vector3(posX, posY, 0));
             }
         }
+        else if (msgParams[0].Equals("DESTROY"))
+        {
+            string id = msgParams[1];
+            DestroyEntity(id);
+        }
 
         Debug.Log("CLIENT: RECV: " + message);
     }

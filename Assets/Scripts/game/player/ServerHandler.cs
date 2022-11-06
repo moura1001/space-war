@@ -135,5 +135,27 @@ public class ServerHandler : MonoBehaviour
         gameEntities.Add(id, enemy);
 
         UDPSocketHandler.Instance.SocketSendMessage($"CREATE;enemy;{id};{pos.x}@{pos.y}");
+
+        enemyScript.OnArrivalPosition += OnArrivalPositionEnemy;
+    }
+
+    private void OnArrivalPositionEnemy(GameObject enemy)
+    {
+        string id = enemy.GetComponent<Enemy>().GetId();
+
+        DestroyEnemy(id);
+    }
+
+    private void DestroyEnemy(string id)
+    {
+        GameObject enemy;
+
+        if (gameEntities.TryGetValue(id, out enemy))
+        {
+            gameEntities.Remove(id);
+            Destroy(enemy);
+
+            UDPSocketHandler.Instance.SocketSendMessage($"DESTROY;{id}");
+        }
     }
 }
