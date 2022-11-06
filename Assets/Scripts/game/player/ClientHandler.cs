@@ -10,8 +10,15 @@ public class ClientHandler : MonoBehaviour
     public GameObject enemy;
 
     private GameObject player;
+    private GameObject server;
 
     private Dictionary<string, GameObject> gameEntities;
+
+    private float moveSpeed = 10;
+
+    private float horizontalInputServer;
+    private float verticalInputServer;
+    private bool sendMoveMessage;
 
     // Start is called before the first frame update
     void Start()
@@ -23,7 +30,31 @@ public class ClientHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        float horizontalInput = Input.GetAxis("Horizontal");
+
+        float verticalInput = Input.GetAxis("Vertical");
+
+        Vector3 newPos = player != null ? player.transform.position + (new Vector3(horizontalInput, verticalInput) * moveSpeed * Time.deltaTime) : new Vector3(float.MaxValue, float.MaxValue);
+
+
+        if ((horizontalInput != 0 || verticalInput != 0) && (newPos.x < 8 && newPos.x > -8 && newPos.y < 4 && newPos.y > -4))
+        {
+            sendMoveMessage = true;
+
+            UDPSocketHandler.Instance.SocketSendMessage($"MOVE;{horizontalInput}@{verticalInput}");
+            player.transform.Translate(new Vector3(horizontalInput, verticalInput, 0) * moveSpeed * Time.deltaTime);
+
+        }
+        else if (sendMoveMessage && horizontalInput == 0 && verticalInput == 0)
+        {
+            sendMoveMessage = false;
+            UDPSocketHandler.Instance.SocketSendMessage($"MOVE;{horizontalInput}@{verticalInput}");
+        }
+
+        if (server != null && (horizontalInputServer != 0 || verticalInputServer != 0))
+        {
+            server.transform.Translate(new Vector3(horizontalInputServer, verticalInputServer) * moveSpeed * Time.deltaTime);
+        }
     }
 
     private void InstantiateEntity(string type, string id, Vector3 position)
@@ -34,6 +65,7 @@ public class ClientHandler : MonoBehaviour
         {
             case "player1":
                 entity = Instantiate(player1, position, Quaternion.identity);
+                server = entity;
                 break;
 
             case "player2":
@@ -68,24 +100,16 @@ public class ClientHandler : MonoBehaviour
 
         if (msgParams[0].Equals("MOVE"))
         {
-            /*if (msgParams.Length == 3)
+            if (msgParams.Length == 2)
             {
-                string type = msgParams[1];
-
-                string[] moveParams = msgParams[2].Split(',');
-                float horizontalInput = 0;
-                float verticalInput = 0;
-
+                string[] moveParams = msgParams[1].Split('@');
+                
                 if (moveParams.Length == 2)
                 {
-                    horizontalInput = float.Parse(moveParams[0]);
-                    verticalInput = float.Parse(moveParams[1]);
+                    horizontalInputServer = float.Parse(moveParams[0]);
+                    verticalInputServer = float.Parse(moveParams[1]);
                 }
-
-                player.transform.Translate(new Vector3(horizontalInput, verticalInput, 0) * 10 * Time.deltaTime);
-            }*/
-
-            UDPSocketHandler.Instance.ClientSendMessage(message);
+            }
         
         } 
         else if (msgParams[0].Equals("CREATE"))

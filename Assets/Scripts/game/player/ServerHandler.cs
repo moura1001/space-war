@@ -19,6 +19,7 @@ public class ServerHandler : MonoBehaviour
 
     private float horizontalInputClient;
     private float verticalInputClient;
+    private bool sendMoveMessage;
 
     // Start is called before the first frame update
     void Start()
@@ -28,10 +29,6 @@ public class ServerHandler : MonoBehaviour
         UDPSocketHandler.Instance.AddOnReceiveMessageListenerForServer(OnReceiveMessage);
 
         StartCoroutine(InstantiateEntities());
-
-        //InstantiatePlayer1();
-        //InstantiatePlayer2();
-        //InstantiateSpawnHandler();
     }
 
     // Update is called once per frame
@@ -41,15 +38,25 @@ public class ServerHandler : MonoBehaviour
 
         float verticalInput = Input.GetAxis("Vertical");
 
-        Vector3 newPos = player.transform.position + (new Vector3(horizontalInput, verticalInput, 0) * moveSpeed * Time.deltaTime);
+        Vector3 newPos = player != null ? player.transform.position + (new Vector3(horizontalInput, verticalInput) * moveSpeed * Time.deltaTime) : new Vector3(float.MaxValue, float.MaxValue);
 
 
         if ((horizontalInput != 0 || verticalInput != 0) && (newPos.x < 8 && newPos.x > -8 && newPos.y < 4 && newPos.y > -4))
         {
-            UDPSocketHandler.Instance.ServerSendMessage($"MOVE;player2;{horizontalInput}@{verticalInput}");
-            player.transform.Translate(new Vector3(horizontalInput, verticalInput, 0) * moveSpeed * Time.deltaTime);
+            sendMoveMessage = true;
 
-            client.transform.Translate(new Vector3(horizontalInputClient, verticalInputClient, 0) * 10 * Time.deltaTime);
+            UDPSocketHandler.Instance.SocketSendMessage($"MOVE;{horizontalInput}@{verticalInput}");
+            player.transform.Translate(new Vector3(horizontalInput, verticalInput, 0) * moveSpeed * Time.deltaTime);
+        
+        } else if (sendMoveMessage && horizontalInput == 0 && verticalInput == 0)
+        {
+            sendMoveMessage = false;
+            UDPSocketHandler.Instance.SocketSendMessage($"MOVE;{horizontalInput}@{verticalInput}");
+        }
+
+        if (client != null && (horizontalInputClient != 0 || verticalInputClient != 0))
+        {
+            client.transform.Translate(new Vector3(horizontalInputClient, verticalInputClient) * moveSpeed * Time.deltaTime);
         }
     }
 
@@ -72,7 +79,7 @@ public class ServerHandler : MonoBehaviour
 
         gameEntities.Add(id, player);
 
-        UDPSocketHandler.Instance.ServerSendMessage($"CREATE;player1;{id};{pos.x}@{pos.y}");
+        UDPSocketHandler.Instance.SocketSendMessage($"CREATE;player1;{id};{pos.x}@{pos.y}");
     }
 
     private void InstantiatePlayer2()
@@ -85,7 +92,7 @@ public class ServerHandler : MonoBehaviour
 
         gameEntities.Add(id, client);
 
-        UDPSocketHandler.Instance.ServerSendMessage($"CREATE;player2;{id};{pos.x}@{pos.y}");
+        UDPSocketHandler.Instance.SocketSendMessage($"CREATE;player2;{id};{pos.x}@{pos.y}");
     }
 
     private void OnReceiveMessage(string ip, int port, byte[] data, int bytesRead)
@@ -94,13 +101,11 @@ public class ServerHandler : MonoBehaviour
 
         string[] msgParams = message.Split(';');
 
-        if (msgParams[0].StartsWith("MOVE"))
+        if (msgParams[0].Equals("MOVE"))
         {
-            if (msgParams.Length == 3)
+            if (msgParams.Length == 2)
             {
-                string type = msgParams[1];
-
-                string[] moveParams = msgParams[2].Split('@');
+                string[] moveParams = msgParams[1].Split('@');
 
                 if (moveParams.Length == 2)
                 {
@@ -109,6 +114,8 @@ public class ServerHandler : MonoBehaviour
                 }
             }
         }
+
+        Debug.Log("SERVER: RECV: " + message);
     }
 
     private void InstantiateSpawnHandler()
@@ -127,6 +134,6 @@ public class ServerHandler : MonoBehaviour
 
         gameEntities.Add(id, enemy);
 
-        UDPSocketHandler.Instance.ServerSendMessage($"CREATE;enemy;{id};{pos.x}@{pos.y}");
+        UDPSocketHandler.Instance.SocketSendMessage($"CREATE;enemy;{id};{pos.x}@{pos.y}");
     }
 }
