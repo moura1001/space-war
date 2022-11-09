@@ -62,6 +62,8 @@ public class MenuHandler : MonoBehaviour
         // Home Screen
         homeSingleplayerButton.onClick.AddListener(() => {
             Debug.Log("Singleplayer clicked");
+            SinglePlayerScreen();
+            SceneManager.LoadScene(2);
         });
 
         homeMultiplayerButton.onClick.AddListener(() => {
@@ -94,6 +96,12 @@ public class MenuHandler : MonoBehaviour
     {
         home.SetActive(true);
         multiplayerEnterButton.gameObject.transform.parent.gameObject.SetActive(true);
+        multiplayer.SetActive(false);
+    }
+
+    private void SinglePlayerScreen()
+    {
+        home.SetActive(false);
         multiplayer.SetActive(false);
     }
 

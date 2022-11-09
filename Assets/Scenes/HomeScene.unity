@@ -1454,8 +1454,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48b27cde824b41d408b2f37de9c8a7bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serverHandler: {fileID: 8774233778294200298, guid: a7064008b66d9ea408722751bbe273cb, type: 3}
-  clientHandler: {fileID: 5375632670776537341, guid: 21119023d59db0f4f895dd2b416b0917, type: 3}
 --- !u!4 &784273414
 Transform:
   m_ObjectHideFlags: 0

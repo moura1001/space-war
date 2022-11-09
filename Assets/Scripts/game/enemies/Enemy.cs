@@ -10,6 +10,9 @@ public class Enemy : MonoBehaviour
 
     public event SpawnHandler.OnSpawnEnemy OnArrivalPosition;
 
+    public delegate void OnHit(GameObject enemy, GameObject projectil);
+    public event OnHit OnHitDamage;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,7 +26,9 @@ public class Enemy : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D col)
     {
-        Debug.Log("OnTriggerEnter2D");
+        Debug.Log("OnTriggerEnter2D: " + col.name);
+
+        OnHitDamage?.Invoke(gameObject, col.gameObject);
     }
 
     private IEnumerator CheckPosition()
